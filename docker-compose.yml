@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ../green-house-dashboard
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    networks:
+      - greenhouse-network
+
+  backend:
+    build:
+      context: ../greenhouse-backend-cloud
+    ports:
+      - "7071:7071"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:7071
+    depends_on:
+      - frontend
+    networks:
+      - greenhouse-network
+
+networks:
+  greenhouse-network:
+    driver: bridge
