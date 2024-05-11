@@ -1,29 +1,29 @@
 version: '3.8'
 
 services:
-  frontend:
-    build:
-      context: ../green-house-dashboard
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=development
-    networks:
-      - greenhouse-network
-
   backend:
     build:
       context: ../greenhouse-backend-cloud
+      dockerfile: Dockerfile
     ports:
-      - "7071:7071"
+      - "7128:7128"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:7071
+      - ASPNETCORE_URLS=http://+:7128
+    volumes:
+      - ../greenhouse-backend-cloud/EfcDataAccess/Greenhouse.db:/app/EfcDataAccess/Greenhouse.db
+
+  frontend:
+    build:
+      context: ../green-house-dashboard
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_BACKEND_URL=http://backend:7128
     depends_on:
-      - frontend
-    networks:
-      - greenhouse-network
+      - backend
 
 networks:
-  greenhouse-network:
+  default:
     driver: bridge
